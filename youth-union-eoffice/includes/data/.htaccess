@@ -1,0 +1,6 @@
+<filesmatch "\.php$">
+deny from all
+</filesmatch>
+<filesmatch "\.txt$">
+deny from all
+</filesmatch>

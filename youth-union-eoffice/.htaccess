@@ -1,0 +1,13 @@
+<Files ".htaccess">
+deny from all
+</Files>
+
+php_flag register_globals off
+
+<FilesMatch "\.(inc|tpl|h|ihtml|sql|ini|conf|class|bin|spd|theme|module|exe)$">
+deny from all
+</FilesMatch>
+
+<Files ~ "\mainfile.php$">
+deny from all
+</Files>

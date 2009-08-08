@@ -1,0 +1,208 @@
+body, tr, td, table, th {
+color : #000000;
+font-family : tahoma, verdana, arial;
+font-size : 11px;
+}
+form {
+margin : 0;
+}
+a, a:link, a:active, a:visited {
+color : #003c5e;
+text-decoration : none;
+}
+a:hover {
+color : #ef6d00;
+text-decoration : underline;
+}
+textarea, select {
+color : #000000;
+font : normal 11px tahoma, verdana, arial;
+border : 1px solid;
+border-color : #000000;
+}
+.selects {
+font : normal 10px tahoma, verdana, arial;
+border : 1px solid;
+border-color : #000000;
+width : 170px;
+}
+.sinput {
+font-size : 11px;
+font-family : tahoma, verdana, arial;
+border : 1px solid #b9b9b9;
+width : 100%;
+}
+hr {
+height : 0;
+border : 0 solid #b9b9b9;
+border-top-width : 1px;
+}
+.menu {
+font-size : 12px;
+font-family : tahoma;
+color : #000000;
+font-weight : bold;
+}
+td.top, a:link.top, a:active.top, a:visited.top {
+color : #000000;
+font-size : 11px;
+font-family : Tahoma, Verdana, Arial;
+font-weight : bold;
+}
+a:hover.top {
+color : #294a7b;
+text-decoration : none;
+}
+.topmenu {
+font-size : 11px;
+color : #294a7b;
+font-family : tahoma, verdana, arial;
+}
+:hover.topmenu {
+color : #ef6d00;
+}
+.topsmall {
+font-size : 9px;
+color : #30a1db;
+font-family : tahoma, verdana, arial;
+}
+.tsmall {
+font-size : 9px;
+color : #5f5f5f;
+font-family : tahoma, verdana, arial;
+}
+.A_black {
+font-size : 11px;
+color : #000000;
+font-family : tahoma, verdana, arial;
+}
+:hover.A_black {
+color : #30a1db;
+}
+.A_white, a:link.A_white, a:active.A_white, a:visited.A_white {
+font-size : 10px;
+color : #f0f0f0;
+font-family : tahoma;
+font-weight : bold;
+text-decoration : none;
+text-transform : uppercase;
+}
+a:hover.A_white {
+color : #ffffff;
+}
+.storytitle {
+font-weight : bold;
+font-size : 14px;
+color : #294a7b;
+font-family : arial, verdana, tahoma;
+}
+a:link.storycat, a:active.storycat, a:visited.storycat {
+font-weight : bold;
+font-size : 14px;
+color : #294a7b;
+font-family : Arial;
+text-decoration : underline;
+}
+a:hover.storycat {
+color : #000000;
+}
+.grey {
+font-size : 11px;
+color : #5f5f5f;
+font-family : arial, verdana, tahoma;
+}
+a:link.grey, a:active.grey, a:visited.grey, a:hover.grey {
+font-size : 11px;
+color : #5f5f5f;
+font-family : arial, verdana, tahoma;
+text-decoration : none;
+}
+.code {
+font-size : 9px;
+color : blue;
+font-family : tahoma, verdana, arial;
+}
+h1 {
+font-weight : bold;
+font-size : 15px;
+color : #294a7b;
+font-family : tahoma, verdana, arial;
+}
+h2 {
+font-weight : bold;
+font-size : 14px;
+color : #294a7b;
+font-family : tahoma, verdana, arial;
+}
+.content {
+color : #000000;
+font-size : 11px;
+font-family : Tahoma, Verdana, Arial;
+}
+.title {
+color : #000000;
+font-size : 11px;
+font-family : Tahoma;
+}
+a:link.title, a:active.title, a:visited.title, a:hover.title {
+color : #003c5e;
+font-size : 11px;
+font-family : Tahoma;
+}
+.indexhometext {
+color : #000000;
+font-size : 10pt;
+font-family : Arial;
+}
+.articlehometext {
+color : #373737;
+font-size : 10pt;
+font-family : Arial;
+font-weight : bold;
+}
+.footmsg {
+font-family : Arial;
+font-size : 10px;
+color : #003c5e;
+font-weight : bold;
+}
+.tdmenu {
+border-top-style : solid;
+border-bottom-style : solid;
+background-color : #0168b3;
+text-transform : uppercase;
+color : #e4e4e4;
+font-family : Verdana;
+font-size : 9px;
+font-weight : bold;
+}
+.topmore {
+text-transform : uppercase;
+font-size : 9px;
+font-family : Verdana;
+font-weight : bold;
+color : #333333;
+}
+a:link.indexlink, a:active.indexlink, a:visited.indexlink {
+color : #333333;
+}
+a:hover.indexlink {
+color : #000000;
+}
+.A_menu, a:link.A_menu, a:active.A_menu, a:visited.A_menu {
+font-size : 11px;
+color : #ffffff;
+font-family : tahoma, verdana, arial;
+font-weight : bold;
+text-decoration : none;
+}
+a:hover.A_menu {
+color : #ff9c12;
+}
+.A_bl, a:link.A_bl, a:active.A_bl, a:visited.A_bl {
+font-size : 11px;
+color : #000000;
+font-family : tahoma, verdana, arial;
+font-weight : bold;
+text-decoration : none;
+}

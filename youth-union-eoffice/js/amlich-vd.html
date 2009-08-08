@@ -1,0 +1,57 @@
+﻿<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META NAME="Author" CONTENT="http://mangxd.com">
+<title>Việt Nam &#39;s Lunar Calendar - http://mangvn.org</title>
+
+</head>
+<body>
+
+
+<!--
+Bắt đầu: Âm lịch Việt Nam, tác giả: Hồ Ngọc Đức | Block âm lịch - http://mangvn.org
+//-->
+<center><a name="amlich"></a>
+<script language="JavaScript" src="amlich.js" type="text/javascript"></script>
+<script language="JavaScript">showVietCal();</script>
+<script language="JavaScript">document.writeln(printSelectedMonth()); </script>
+<table border="0" width="100%">
+	<tr>
+		<td align="center">
+<form name="SelectMonth" action="">
+Tháng <select name="month"><option value="1">1<option value="2">2<option value="3">3<option value="4">4<option value="5">5<option value="6">6<option value="7">7<option value="8">8<option value="9">9<option value="10">10<option value="11">11<option value="12">12</select>
+<input type="button" value="Xem" onClick="javascript:viewMonth(parseInt(month.value), parseInt(year.value));"><br>
+Năm&nbsp; <INPUT NAME="year" size=1 value="2005"> 
+<input type="button" value="Xem" onClick="javascript:viewYear(parseInt(year.value));">
+</form>
+		</td>
+	</tr>
+</table>
+<script type="text/javascript">
+<!--
+	getSelectedMonth();
+	document.SelectMonth.month.value = currentMonth;
+	document.SelectMonth.year.value = currentYear;
+	function viewMonth(mm, yy) {
+		window.location = window.location.pathname + '?yy='+yy+'&mm='+mm+'#amlich';
+	}
+	function viewYear(yy) {
+		var loc = 'amlich-namnay.html?yy='+yy;
+		var win2702 = window.open(loc, "win2702", "menubar=yes,scrollbars=yes,resizable=yes");
+	}
+//-->
+</script>
+</center>
+<!--
+Kết thúc: Âm lịch Việt Nam, tác giả: Hồ Ngọc Đức | Block âm lịch - http://mangvn.org
+//-->
+
+
+
+
+
+
+
+
+</body>
+</html>

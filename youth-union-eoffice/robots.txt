@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: footer.php
+Disallow: header.php
+Disallow: /admin/
+Disallow: /blocks/
+Disallow: /images/
+Disallow: /includes/
+Disallow: /themes/
+Disallow: /language/
+Disallow: /modules/
