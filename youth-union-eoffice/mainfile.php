@@ -39,6 +39,7 @@ switch ($db_tmp) {
 
 $prefix = "nukeviet";
 $user_prefix = "nukeviet";
+$yu_prefix="sc";
 $dbtype = "MySQL";
 $sitekey = "6mu76$u^@4sm&iu7z#o51*";
 
