@@ -298,6 +298,7 @@ if ( isset($_COOKIE[USER_COOKIE]) && ! empty($_COOKIE[USER_COOKIE]) )
 	}
 }
 
+
 /**
  * Ket noi file bao mat
  */
