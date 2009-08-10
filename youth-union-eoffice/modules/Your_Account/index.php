@@ -2,9 +2,9 @@
 
 /*
 * @Program:		NukeViet CMS v2.0 RC1
-* @File name: 	Module Your_Account
-* @Version: 	1.0
-* @Date: 		09.05.2009
+* @File name: 	Module Your_Account /Youth Union Account 
+* @Version: 	1.1
+* @Date: 		09.08.2009
 * @Website: 	www.nukeviet.vn
 * @Copyright: 	(C) 2009
 * @License: 	http://opensource.org/licenses/gpl-license.php GNU Public License
@@ -243,173 +243,6 @@ function disabled()
 	include ( "footer.php" );
 }
 
-/**
- * finishNewUser()
- * 
- * @return
- */
-function finishNewUser()
-{
-	global $module_name, $allowuserlogin, $allowuserreg, $sitekey, $gfx_chk, $pass_min, $pass_max, $user_prefix, $db, $useactivate, $nukeurl, $sitename, $adminmail, $expiring, $nick_max;
-	if ( defined('IS_USER') )
-	{
-		header( "Location: modules.php?name=$module_name" );
-		exit();
-	}
-	if ( $allowuserreg != 0 )
-	{
-		info_exit( _ACTDISABLED );
-	}
-	$username = check_html( $_POST['username'], nohtml );
-	$username = substr( htmlspecialchars(str_replace("\'", "'", trim($username))), 0, $nick_max );
-	$username = rtrim( $username, "\\" );
-	$username = str_replace( "'", "\'", $username );
-	$viewuname = check_html( $_POST['viewuname'], nohtml );
-	$user_email = check_html( $_POST['user_email'], nohtml );
-	$user_password = htmlspecialchars( $_POST['user_password'] );
-	$user_password2 = htmlspecialchars( $_POST['user_password2'] );
-	$gfx_check = intval( $_POST['gfx_check'] );
-	$vopros = check_html( $_POST['vopros'], nohtml );
-	$otviet = check_html( $_POST['otviet'], nohtml );
-	$stop = NV_userCheck( $username );
-	if ( $stop == "" )
-	{
-		$stop = NV_mailCheck( $user_email );
-	}
-	if ( $stop != "" )
-	{
-		include ( "header.php" );
-		OpenTable();
-		echo "<br><br><p align=\"center\"><b>" . $stop . "</b><br><br>" . _GOBACK . "</p><br><br>";
-		CloseTable();
-		include ( "footer.php" );
-		exit;
-	}
-	$gfx_check = intval( $_POST['gfx_check'] );
-	if ( extension_loaded("gd") and (! nv_capcha_txt($gfx_check)) and ($gfx_chk == 3 or $gfx_chk == 4 or $gfx_chk == 6 or $gfx_chk == 7) )
-	{
-		include ( "header.php" );
-		OpenTable();
-		echo "<br><br><p align=\"center\"><b>" . _SECCODEINCOR . "</b><br><br>" . _GOBACK . "</p><br><br>";
-		CloseTable();
-		include ( "footer.php" );
-		exit;
-	}
-	if ( $user_password == "" and $user_password2 == "" )
-	{
-		$user_password = NV_makePass();
-	} elseif ( $user_password != $user_password2 )
-	{
-		include ( "header.php" );
-		OpenTable();
-		echo "<center><b>" . _PASSDIFFERENT . "</b><br><br>" . _GOBACK . "</center>";
-		CloseTable();
-		include ( "footer.php" );
-		die();
-	} elseif ( $user_password == $user_password2 and (strlen($user_password) < $pass_min or strlen($user_password) > $pass_max) )
-	{
-		include ( "header.php" );
-		OpenTable();
-		echo "<center>" . _YOUPASSMUSTBE . " <b>$pass_min</b> " . _YOUPASSMUSTBE2 . " <b>$pass_max</b> " . _YOUPASSMUSTBE3 . "<br><br>" . _GOBACK . "</center>";
-		CloseTable();
-		include ( "footer.php" );
-		die();
-	}
-	if ( $otviet == "" )
-	{
-		include ( "header.php" );
-		OpenTable();
-		echo "<center>" . _EROTV . " <b>" . $vopros . "</b>.<br><br>" . _GOBACK . "</center>";
-		CloseTable();
-		include ( "footer.php" );
-		die();
-	}
-	$opros = "" . $vopros . "|" . $otviet . "";
-	if ( $viewuname == "" )
-	{
-		$viewuname = $username;
-	}
-	$new_password = md5( $user_password );
-	if ( $useactivate == 0 )
-	{
-		$user_regdate = time();
-		$user_avatar = "gallery/blank.gif";
-		$user_avatar_type = 3;
-		$a = $db->sql_query( "INSERT INTO " . $user_prefix . "_users (user_id, username, viewuname, user_email, user_regdate, user_password, opros, user_avatar, user_avatar_type) VALUES (NULL, '$username', '$viewuname', '$user_email', '$user_regdate', '$new_password', '$opros', '$user_avatar', '$user_avatar_type')" );
-		if ( ! $a )
-		{
-			exit();
-		}
-		ulist();
-		if ( $allowuserlogin == 1 )
-		{
-			info_exit( _ALLOWUSERLOGIN );
-		}
-		$sql = "SELECT user_password, user_id FROM " . $user_prefix . "_users WHERE username='$username'";
-		$result = $db->sql_query( $sql );
-		$setinfo = $db->sql_fetchrow( $result );
-		docookie( $setinfo[user_id], $username, $new_password );
-		$db->sql_query( "UPDATE " . $user_prefix . "_users SET remember='1'  WHERE user_id='$setinfo[user_id]'" );
-		$uname = $_SERVER["REMOTE_ADDR"];
-		del_online( $uname );
-		include ( "header.php" );
-		OpenTable();
-		echo "<br><br><center><font class=\"option\"><b>" . _YOUARELOGGED . " " . _MEMBERS . "</b><br>" . _NICKNAME . ": <b>$username</b>, " . _PASSWORD . ": <b>$user_password</b></font></center>";
-		echo "<p align=\"center\"><img border=\"0\" src=\"images/load_bar.gif\" width=\"97\" height=\"19\"></p>";
-		if ( $user_password2 != "" )
-		{
-			echo "<p align=\"center\">[<a href=\"modules.php?name=$module_name&op=edituser\">" . _QLOGIN . "</a>]</p><br><br>";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"10;URL=modules.php?name=$module_name&op=edituser\">";
-		}
-		else
-		{
-			echo "<p align=\"center\">[<a href=\"modules.php?name=$module_name&op=changpass\">" . _QLOGIN . "</a>]</p><br><br>";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"10;URL=modules.php?name=$module_name&op=changpass\">";
-		}
-		CloseTable();
-		include ( "footer.php" );
-		exit();
-	}
-	else
-	{
-		mt_srand( (double)microtime() * 1000000 );
-		$maxran = 1000000;
-		$check_num = mt_rand( 0, $maxran );
-		$check_num = md5( $check_num );
-		$time = time();
-		$db->sql_query( "INSERT INTO " . $user_prefix . "_users_temp (user_id, username, viewuname, user_email, user_password, opros, check_num, time) VALUES (NULL, '$username', '$viewuname', '$user_email', '$new_password', '$opros', '$check_num', '$time')" );
-		list( $uid ) = $db->sql_fetchrow( $db->sql_query("SELECT user_id FROM " . $user_prefix . "_users_temp WHERE username='" . $username . "'") );
-		if ( $useactivate == 1 )
-		{
-			$finishlink = "$nukeurl/modules.php?name=$module_name&op=activate&user_id=$uid&check_num=$check_num";
-			$message = "" . _WELCOMETOS . " $sitename!\n\n" . _YOUUSEDEMAIL . " ($user_email) " . _TOREGISTER . " $sitename.\n\n " . _TOFINISHUSER . "\n\n $finishlink\n\n " . _FOLLOWINGMEM . "\n\n" . _UNICKNAME . " $username\n" . _UPASSWORD . " $user_password";
-			$subject = "" . _ACTIVATIONSUB . "";
-			$mailhead = "From: $sitename <$adminmail>\n";
-			$mailhead .= "Content-Type: text/plain; charset= " . _CHARSET . "\n";
-			@mail( $user_email, $subject, $message, $mailhead );
-			$expiring = $expiring / 3600;
-			$thongbao = "" . _FINISHUSERCONF . " $expiring " . _HOUR . ".";
-		}
-		else
-		{
-			$from_ip = $_SERVER['REMOTE_ADDR'];
-			$message = "" . _NVADMIN1 . " $username ($user_email) " . _NVADMIN2 . ": $from_ip " . _NVADMIN3 . " $sitename.\r\n";
-			$message .= "-----------------------------------------------------------\r\n";
-			$message .= "" . _NVADMIN4 . ".";
-			$subject = "" . _ACTIVATIONSUB . "";
-			$mailhead = "From: $username <$user_email>\n";
-			$mailhead .= "Content-Type: text/plain; charset= " . _CHARSET . "\n";
-			@mail( $adminmail, $subject, $message, $mailhead );
-			$thongbao = "" . _FINISHUSERCONF2 . "";
-		}
-		include ( "header.php" );
-		OpenTable();
-		echo "<center><b>" . _ACCOUNTCREATED . "</b><br><br>" . _YOUAREREGISTERED . "<br><br>$thongbao<br><br>" . _THANKSUSER . "</center>";
-		CloseTable();
-		include ( "footer.php" );
-		exit();
-	}
-}
 
 /**
  * activate()
@@ -543,6 +376,9 @@ function userinfo()
 			echo "<td width=\"20\">\n";
 			echo "<a href=\"modules.php?name=Your_Account&amp;op=changpass\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
 			echo "<td><a href=\"modules.php?name=Your_Account&amp;op=changpass\">" . _CHPASSW . "</a></td>\n";
+			echo "<td width=\"20\">\n";
+			echo "<a href=\"modules.php?name=Your_Account&amp;op=yuinfo\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
+			echo "<td><a href=\"modules.php?name=Your_Account&amp;op=yuinfo\">" . _YUINFO . "</a></td>\n";
 			echo "</tr>\n";
 		}
 		echo "<tr>\n";
@@ -776,171 +612,6 @@ function NV_main()
 		header( "Location: modules.php?name=Your_Account&op=userinfo" );
 		exit();
 	}
-}
-
-/**
- * new_user()
- * 
- * @return
- */
-function new_user()
-{
-	global $kb_password, $expiring, $pass_max, $pass_min, $nick_min, $nick_max, $module_name, $allowuserreg, $useactivate, $gfx_chk;
-	if ( defined('IS_USER') )
-	{
-		header( "Location: modules.php?name=$module_name" );
-		exit();
-	}
-	if ( $allowuserreg != 0 )
-	{
-		info_exit( _ACTDISABLED );
-	}
-	include ( "header.php" );
-	//Cauhinh noi quy
-	$caokhungnq = 30;
-	$ngangkhungnq = 80;
-	$docnoiqui = $_POST['docnoiqui'];
-	$nqagree = $_POST['nqagree'];
-	if ( $docnoiqui == 1 )
-	{
-		$docnoiqui = 0;
-		if ( $nqagree == 0 )
-		{
-			header( "Location: index.php" );
-			exit();
-		}
-		else
-		{
-			//
-			OpenTable();
-			echo "\n<script>\n";
-			echo "function check_data(Forma) {\n";
-			echo "if (Forma.username.value == \"\") {\n";
-			echo "alert(\"" . _NAMERESTRICTED . "\");\n";
-			echo "Forma.username.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "dc = Forma.username.value.length;\n";
-			echo "if(dc < $nick_min){\n";
-			echo "alert(\"" . _NICKADJECTIVE . "\");\n";
-			echo "Forma.username.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "if(dc > $nick_max){\n";
-			echo "alert(\"" . _NICK2LONG . "\");\n";
-			echo "Forma.username.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "if (Forma.user_email.value == \"\")  {\n";
-			echo "alert(\"" . _MAILBLOCKED . "\");\n";
-			echo "Forma.user_email.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "t = Forma.user_email.value.search(\"@\");\n";
-			echo "k = Forma.user_email.value.search(\" \");\n";
-			echo "if(k >= 0){\n";
-			echo "alert(\"" . _EMAILNOTUSABLE . "\");\n";
-			echo "Forma.user_email.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "if(t <= -1){\n";
-			echo "alert(\"" . _EMAILNOTUSABLE . "\");\n";
-			echo "Forma.user_email.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "if (Forma.otviet.value == \"\") {\n";
-			echo "alert(\"" . _OTVIET . " ?\");\n";
-			echo "Forma.otviet.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "if (Forma.user_password.value != \"\") {\n";
-			echo "dp = Forma.user_password.value.length;\n";
-			echo "if(dp < $pass_min){\n";
-			echo "alert(\"" . _PASSLENGTH1 . ". " . _YOUPASSMUSTBE . " $pass_min " . _YOUPASSMUSTBE2 . " $pass_max " . _YOUPASSMUSTBE3 . "\");\n";
-			echo "Forma.user_password.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "if(dc > $pass_max){\n";
-			echo "alert(\"" . _PASSLENGTH . ". " . _YOUPASSMUSTBE . " $pass_min " . _YOUPASSMUSTBE2 . " $pass_max " . _YOUPASSMUSTBE3 . "\");\n";
-			echo "Forma.user_password.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "if (Forma.user_password.value != Forma.user_password2.value) {\n";
-			echo "alert(\"" . _PASSDIFFERENT . "\");\n";
-			echo "Forma.user_password.focus();\n";
-			echo "return false;\n";
-			echo "}\n";
-			echo "}\n";
-			if ( extension_loaded("gd") and ($gfx_chk == 3 or $gfx_chk == 4 or $gfx_chk == 6 or $gfx_chk == 7) )
-			{
-				echo "if (Forma.gfx_check.value == \"\") {\n";
-				echo "alert(\"" . _SECURITYCODE . " ?\");\n";
-				echo "Forma.gfx_check.focus();\n";
-				echo "return false;\n";
-				echo "}\n";
-			}
-			echo "return true; \n";
-			echo "}\n";
-			echo "</script>\n";
-			echo "<form onsubmit=\"return check_data(this)\" action=\"modules.php?name=$module_name\" method=\"post\">\n";
-			echo "<center><b>" . _NEWUSERREG . "</b></center><br><br>\n";
-			echo "<center><table cellpadding=\"0\" cellspacing=\"2\" border=\"0\">\n";
-			echo "<tr><td>" . _NICKNAME . ":<font color=red>*</font></td><td><input type=\"text\" name=\"username\" size=\"30\" maxlength=\"$nick_max\"></td></tr>\n";
-			echo "<tr><td>" . _VIEWNAME . ":</td><td><input type=\"text\" name=\"viewuname\" size=\"30\" maxlength=\"100\"></td></tr>\n";
-			echo "<tr><td>" . _EMAIL . ":<font color=red>*</font></td><td><input type=\"text\" name=\"user_email\" size=\"30\" maxlength=\"255\"></td></tr>\n";
-			echo "<tr><td>" . _PASSWORD . ":</td><td><input type=\"password\" name=\"user_password\" size=\"30\" maxlength=\"$pass_max\"></td></tr>\n<tr><td>" . _RETYPEPASSWORD . ":</td><td><input type=\"password\" name=\"user_password2\" size=\"30\" maxlength=\"$pass_max\"></td></tr>\n";
-			echo "<tr><td>" . _VOPROS . ":</td><td><select name=\"vopros\">\n";
-
-			$vopros_ar = array( _VOPROS1, _VOPROS2, _VOPROS3, _VOPROS4, _VOPROS5 );
-			for ( $l = 0; $l < sizeof($vopros_ar); $l++ )
-			{
-				echo "<option>" . $vopros_ar[$l] . "</option>\n";
-			}
-			echo "</select></td></tr>\n";
-			echo "<tr><td>" . _OTVIET . ":<font color=red>*</font></td><td><input type=\"text\" name=\"otviet\" size=\"30\" maxlength=\"100\"></td></tr>\n";
-			if ( extension_loaded("gd") and ($gfx_chk == 3 or $gfx_chk == 4 or $gfx_chk == 6 or $gfx_chk == 7) )
-			{
-				echo "<tr><td>" . _SECURITYCODE . ":</td><td><img width=\"73\" height=\"17\" src='?gfx=gfx' border='1' alt='" . _SECURITYCODE . "' title='" . _SECURITYCODE . "'></td></tr>\n";
-				echo "<tr><td>" . _TYPESECCODE . ":<font color=red>*</font></td><td><input type=\"text\" NAME=\"gfx_check\" SIZE=\"11\" MAXLENGTH=\"6\"></td></tr>\n";
-			}
-			echo "<tr><td colspan='2' align=center>\n";
-			echo "<input type=\"hidden\" name=\"op\" value=\"finish\">\n";
-			echo "<br><input type=\"submit\" value=\"" . _NEWREG . "\">\n";
-			echo "</td></tr></table></center>\n";
-			echo "</form>\n";
-			echo "<br><br>\n";
-			echo "" . _ASREG1 . "<br>\n";
-			if ( $kb_password == 1 )
-			{
-				echo "" . _ASREG2 . "<br>\n";
-			}
-			else
-			{
-				echo "" . _ASREG2A . "<br>\n";
-			}
-			echo "" . _INFOPR . "<br>\n";
-			$expiring = $expiring / 3600;
-			if ( $useactivate == 1 )
-			{
-				echo "" . _YOUWILLRECEIVE . " $expiring " . _HOUR . ".<br><br>\n";
-			} elseif ( $useactivate == 2 )
-			{
-				echo "" . _YOUWILLRECEIVE2 . "\n";
-			}
-			echo "<br><br><center><font class=\"content\">[ <a href=\"modules.php?name=$module_name\">" . _USERLOGIN . "</a> | <a href=\"modules.php?name=$module_name&amp;op=pass_lost\">" . _PASSWORDLOST . "</a> ]</font></center>\n";
-			CloseTable();
-			// them trinh bay noi quy
-		}
-	}
-	else
-	{
-		OpenTable();
-		echo "<table align=\"center\" border=\"0\" cellspacing=\"10\">" . "<tr><td class=\"storytitle\">" . _NOIQUITITLE . "</td></tr>" . "<tr>" . "<td>" . "<form method=\"POST\" action=\"modules.php?name=$module_name&op=new_user\">" . "   <div height=\"200\" style=\"overflow: auto; height: 200px; width: 100%;\">" . _NOIQUI . "</div>" . "   <table align=\"center\" border=\"0\" width=\"100%\">" . "      <tr>" . "         <td>" . "         <p align=\"left\">" . "         <input type=\"radio\" value=\"1\" name=\"nqagree\">" . _AGREE . "</td>" . "         <td><input type=\"radio\" name=\"nqagree\" checked value=\"0\">" . _DEAGREE . "</td>" . "      </tr>" . "      <tr>" . "         <td colspan=\"2\">&nbsp;<input type=\"hidden\" value=\"1\" name=\"docnoiqui\"></td>" . "         <td colspan=\"2\"><input type=\"submit\" value=\"" . _NEXT . "\" name=\"nqread\"></td>" . "      </tr>" . "   </table>" . "</form>" . "</td>" . "</tr>" . "</table>";
-
-		CloseTable();
-	}
-	//
-	include ( "footer.php" );
 }
 
 /**
@@ -1337,28 +1008,7 @@ function edituser()
 			exit;
 		}
 		include ( "header.php" );
-		OpenTable();
-		echo "<center><font class=\"option\">" . _PERSONALINFO . ": <b>" . $mbrow['viewuname'] . "</b></font></center><br><br>";
-		echo "<table border=\"0\" style=\"border-collapse: collapse\" width=\"100%\" cellspacing=\"3\">\n";
-		echo "<tr>\n";
-		echo "<td width=\"20\">\n";
-		echo "<a href=\"modules.php?name=Your_Account\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
-		echo "<td><a href=\"modules.php?name=Your_Account\">" . _USERPAGE . "</a></td>\n";
-		echo "<td width=\"20\">\n";
-		echo "<a href=\"modules.php?name=Your_Account&amp;op=changpass\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
-		echo "<td><a href=\"modules.php?name=Your_Account&amp;op=changpass\">" . _CHPASSW . "</a></td>\n";
-		echo "</tr>\n";
-		echo "<tr>\n";
-		echo "<td width=\"20\">\n";
-		echo "<a href=\"index.php\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
-		echo "<td><a href=\"index.php\">" . _HOMEPAGE . "</a></td>\n";
-		echo "<td width=\"20\">\n";
-		echo "<a href=\"modules.php?name=Your_Account&amp;op=logout\"><img border=\"0\" src=\"images/out.gif\" width=\"20\" height=\"20\"></a></td>\n";
-		echo "<td><a href=\"modules.php?name=Your_Account&amp;op=logout\">" . _LOGOUTEXIT . "</a></td>\n";
-		echo "</tr>\n";
-		echo "</table>\n";
-		CloseTable();
-		echo "<br>\n";
+		MainMenu();
 		OpenTable();
 		echo "<table cellpadding=\"3\" border=\"0\" width='100%'><tr><td>\n";
 		echo "<form action=\"modules.php?name=$module_name\" method=\"post\">\n";
@@ -1501,7 +1151,36 @@ function saveuser()
 		info_exit( _MUSTBEUSER );
 	}
 }
-
+/**
+ * 
+ *
+ *  @return 
+ */
+function MainMenu()
+{
+	OpenTable();
+	echo "<center><font class=\"option\">" . _PERSONALINFO . ": <b>" . $mbrow['viewuname'] . "</b></font></center><br><br>";
+	echo "<table border=\"0\" style=\"border-collapse: collapse\" width=\"100%\" cellspacing=\"3\">\n";
+	echo "<tr>\n";
+	echo "<td width=\"20\">\n";
+	echo "<a href=\"modules.php?name=Your_Account&amp;op=edituser\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
+	echo "<td><a href=\"modules.php?name=Your_Account&amp;op=edituser\">" . _CHANGEYOURINFO . "</a></td>\n";
+	echo "<td width=\"20\">\n";
+	echo "<a href=\"modules.php?name=Your_Account\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
+	echo "<td><a href=\"modules.php?name=Your_Account\">" . _USERPAGE . "</a></td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td width=\"20\">\n";
+	echo "<a href=\"index.php\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
+	echo "<td><a href=\"index.php\">" . _HOMEPAGE . "</a></td>\n";
+	echo "<td width=\"20\">\n";
+	echo "<a href=\"modules.php?name=Your_Account&amp;op=logout\"><img border=\"0\" src=\"images/out.gif\" width=\"20\" height=\"20\"></a></td>\n";
+	echo "<td><a href=\"modules.php?name=Your_Account&amp;op=logout\">" . _LOGOUTEXIT . "</a></td>\n";	
+	echo "</tr>\n";
+	echo "</table>\n";	
+	CloseTable();
+	echo "<br>\n";	
+}
 /**
  * changpass()
  * 
@@ -1524,28 +1203,7 @@ function changpass()
 			exit;
 		}
 		include ( "header.php" );
-		OpenTable();
-		echo "<center><font class=\"option\">" . _PERSONALINFO . ": <b>" . $mbrow['viewuname'] . "</b></font></center><br><br>";
-		echo "<table border=\"0\" style=\"border-collapse: collapse\" width=\"100%\" cellspacing=\"3\">\n";
-		echo "<tr>\n";
-		echo "<td width=\"20\">\n";
-		echo "<a href=\"modules.php?name=Your_Account&amp;op=edituser\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
-		echo "<td><a href=\"modules.php?name=Your_Account&amp;op=edituser\">" . _CHANGEYOURINFO . "</a></td>\n";
-		echo "<td width=\"20\">\n";
-		echo "<a href=\"modules.php?name=Your_Account\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
-		echo "<td><a href=\"modules.php?name=Your_Account\">" . _USERPAGE . "</a></td>\n";
-		echo "</tr>\n";
-		echo "<tr>\n";
-		echo "<td width=\"20\">\n";
-		echo "<a href=\"index.php\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
-		echo "<td><a href=\"index.php\">" . _HOMEPAGE . "</a></td>\n";
-		echo "<td width=\"20\">\n";
-		echo "<a href=\"modules.php?name=Your_Account&amp;op=logout\"><img border=\"0\" src=\"images/out.gif\" width=\"20\" height=\"20\"></a></td>\n";
-		echo "<td><a href=\"modules.php?name=Your_Account&amp;op=logout\">" . _LOGOUTEXIT . "</a></td>\n";
-		echo "</tr>\n";
-		echo "</table>\n";
-		CloseTable();
-		echo "<br>\n";
+		MainMenu();
 		OpenTable();
 		echo "<table cellpadding=\"3\" border=\"0\" width='100%'><tr><td>\n";
 		echo "<form action=\"modules.php?name=$module_name\" method=\"post\">\n";
@@ -1641,6 +1299,75 @@ function savechangpass()
 	}
 }
 
+/**
+ * 
+ * 
+ * 
+ * */
+function YUInfo()
+{
+	global $allowuserlogin, $allowmailchange, $suspend_nick, $module_name, $db;
+	if ( $allowuserlogin == 1 )
+	{
+		info_exit( _ALLOWUSERLOGIN );
+	}
+	if ( defined('IS_USER') )
+	{
+		global $mbrow;
+		$sql="SELECT * FROM sc_yumember";
+		$result= $db->sql_query($sql);
+		$YUinfo= $db->sql_fetchrow($result);	
+		
+		
+		$suspend_nick = explode( "|", $suspend_nick );
+		if ( $mbrow['username'] != "" and in_array($mbrow['username'], $suspend_nick))
+		{
+			Header( "Location: modules.php?name=$module_name&op=logout" );
+			exit;
+		}		
+		include ( "header.php" );
+		MainMenu();
+		OpenTable();
+		if (! $YUinfo)
+		{
+			echo "Không có thông tin về đoàn viên";						
+		}
+		else
+		{
+			echo "<table cellpadding=\"3\" border=\"0\" width='100%'><tr><td>\n";
+			echo "<form action=\"modules.php?name=$module_name\" method=\"post\">\n";			
+			echo "<b>"._MEMBERID."</b>:</td><td><b>".$YUinfo['member_id']."</b></td></tr><tr>\n";
+			echo "<td><b>"._NAME."</b>:</td><td><input type=text name=name value=\"".$YUinfo['name']."\"/></td></tr><tr>\n";
+			echo "<td><b>"._FEMALE."</b>:</td><td>";
+			if ($YUinfo['female']==0)
+			{
+				echo "<input type=radio name=female checked //>Nam ";
+				echo "<input type=radio name=female //>Nữ";
+			}
+			else
+			{
+				echo "<input type=radio name=female  //>Nam ";
+				echo "<input type=radio name=female checked// >Nữ"; 
+			}
+			echo "</b></td></tr><tr>\n";
+			echo "<td><b>"._NATIVELAND."</b>:</td><td><input type= text name= native_land value=\"".$YUinfo['native_land']."\"/></td></tr><tr>\n";
+			echo "<td><b>"._BIRTHDAY."</b>:</td><td>".$YUinfo['birthday']."</td></tr><tr>\n";
+			echo "<td><b>"._JOINDAY."</b>:</td><td>".$YUinfo['join_date']."</b></td></tr><tr>\n";
+			echo "<td><b>"._STATUS."</b>:</td><td>".$YUinfo['status']."</b></td></tr><tr>\n";
+			echo "<td><b>"._CURRENTBRANCH."</b>:</td><td>".$YUinfo['current_branch']."</b></td></tr><tr>\n";
+			echo "<td><b>"._FEEUNION."</b>:</td><td>".$YUinfo['fee_union']."</b></td></tr><tr>\n";
+			echo "<tr><td colspan='2' align='center'>\n";
+			echo "<input type=\"hidden\" name=\"opros\" value=\"" . $mbrow['opros'] . "\">\n";
+			echo "<input type=\"hidden\" name=\"user_id\" value=\"" . $mbrow['user_id'] . "\">\n";
+			echo "<input type=\"hidden\" name=\"op\" value=\"saveuser\">\n";
+			echo "<input type=\"submit\" value=\"" . _SAVECHANGES . "\">\n";
+			echo "</tr></form></table>";
+			
+		}
+		CloseTable();
+		include("footer.php");		
+	}
+}
 
 switch ( $op )
 {
@@ -1651,10 +1378,6 @@ switch ( $op )
 
 	case "lost_pass":
 		lost_pass();
-		break;
-
-	case "finish":
-		finishNewUser();
 		break;
 
 	case "userinfo":
@@ -1677,9 +1400,6 @@ switch ( $op )
 		pass_lost();
 		break;
 
-	case "new_user":
-		new_user();
-		break;
 
 	case "activate":
 		activate();
@@ -1696,7 +1416,9 @@ switch ( $op )
 	case "checkop":
 		checkop();
 		break;
-
+	case "yuinfo":
+		YUInfo();
+		break;
 	default:
 		NV_main();
 		break;

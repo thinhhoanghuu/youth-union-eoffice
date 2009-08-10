@@ -197,5 +197,16 @@ define( "_DEAGREE", "Không đồng ý, đưa tôi về trang chủ" );
 define( "_NOIQUITITLE", "Nội quy" );
 define( "_NEXT", "Tiếp tục" );
 define( "_NOIQUI", "Thành viên của website đồng ý với việc chịu sự quản lý của Ban Quản Trị.<br><br>Thông tin do thành viên đưa lên sẽ do Ban Quản Trị website quản lý và thành viên phải tự chịu trách nhiệm về bản quyền, tính xác thực, hợp pháp của các thông tin do mình đưa lên. Thành viên phải tuân thủ các quy định của chúng tôi, đảm bảo tuân thủ luật pháp và các quy định có liên quan đến Website này.<br><br>Nội quy này sẽ được cập nhật và thay đổi khi cần thiết." );
+//thong tin doan vien
+define("_MEMBERID","Mã đoàn viên");
+define("_NAME","Họ và tên");
+define("_FEMALE","Giới tính");
+define("_NATIVELAND","Quê Quán");
+define("_BIRTHDAY","Ngày sinh");
+define("_JOINDAY","Ngày vào Đoàn");
+define("_STATUS","Trạng thái");
+define("_CURRENTBRANCH","Cơ sở Đoàn");
+define("_FEEUNION","Đoàn phí");
+define("_YUINFO","Thông tin đoàn viên");
 
 ?>
