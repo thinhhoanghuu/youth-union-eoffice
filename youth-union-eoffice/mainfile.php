@@ -37,8 +37,8 @@ switch ($db_tmp) {
 		break;
 }
 
-$prefix = "nk";
-$user_prefix = "nk";
+$prefix = "nukeviet";
+$user_prefix = "nukeviet";
 $dbtype = "MySQL";
 $sitekey = "6mu76$u^@4sm&iu7z#o51*";
 
