@@ -38,7 +38,7 @@ define("_EVENTID","Mã sự kiện");
 define("_DETAIL","Tóm tắt nội dung");
 define("_BASENAME","Tên cơ sở");
 define("_MEMJOIN","Đoàn viên tham gia");
-define("","");
-define("","");
-define("","");
+define("_SUMMEM","Tổng số Đoàn viên");
+define("_ISFEMALE","Nam");
+define("_ISMALE","Nữ");
 ?>

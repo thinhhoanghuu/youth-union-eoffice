@@ -201,7 +201,7 @@ function Main()
  * */
 function YUFind()
 {
-	global $module_name;
+	global $module_name,$db, $yu_prefix, $cp;
 	include("header.php");
 	OpenTable2();
 	echo "<form class=action method=GET action=\"modules.php\">\n ";
@@ -211,6 +211,54 @@ function YUFind()
 	echo "<center><input type=submit name=submit value=find /></center>";
 	echo "</form>";
 	CloseTable2();
+	OpenTable();
+	$storynum=20;
+	$sql="SELECT * FROM ".$yu_prefix."_yumember";
+	$YUnum=$db->sql_numrows($db->sql_query($sql));
+	$allpage=ceil($YUnum/$storynum);
+	if ($cp="")
+	{
+		$cp=1;
+	}
+	$offset=$cp*$storynum;
+	$sql="SELECT member_id, name, female, birthday, join_date, current_branch FROM ".$yu_prefix."_yumember LIMIT $offset, $storynum";
+	$result=$db->sql_query($sql);
+	
+	echo "<center><b>"._SUMMEM.": ".$YUnum."</b></center><br>\n";
+	echo "<table border=1 width=100%>\n";
+	echo "<tr><td><b>"._MEMBERID."</b></td><td><b>"._NAME."</b></td><td><b>"._FEMALE."</b></td><td><b>"._BIRTHDAY."</b></td><td><b>"._JOINDAY."</b></td><td><b>"._CURRENTBRANCH."</b></td></tr>\n";
+	while ($row=$db->sql_fetchrow($result))
+	{
+		echo "<tr><td>".$row['member_id']."</td><td>".$row['name']."</td><td>";
+		if ($row['female']==1)
+		{
+			echo _ISFEMALE;
+		}
+		else
+		{
+			echo _ISMALE;
+		}
+		echo "</td><td>".$row['birthday']."</td><td>".$row['join_date']."</td><td>".$row['current_branch']."</td></tr>\n";
+	}
+	echo "</table>";
+	if ($allpage>1)
+	{
+		echo "<hr><center>";
+		if ($cp>1)
+		{
+			echo "<b><a href=\"modules.php?name=YU_Manager&amp;op=yufind&amp;cp=".($cp-1)."\" /> <<--</a></b>\n";
+		}
+		for ($i=1; $i<cp ;$i++)
+		{
+			echo "a href=\"modules.php?name=YU_Manager&amp;op=yufind&amp;cp=".$i."\" /> <<--</a>\n";
+		}
+		if ($cp<$allpage)
+		{
+			echo "<b><a href=\"modules.php?name=YU_Manager&amp;op=yufind&amp;cp=".($cp+1)."\" /> -->></a></b>\n";
+		}
+	}
+	CloseTable();
+	
 	include("footer.php");
 }
 /**
