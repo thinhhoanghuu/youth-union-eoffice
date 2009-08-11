@@ -19,21 +19,21 @@ if (file_exists("$datafold/antidos.php")) {
 }
 
 $dbhost = "localhost";
-$dbname = "nukeviet";
+$dbname = "yueoffice";
 
 $db_tmp = date("G") % 3;
 switch ($db_tmp) {
 	case 0:
 		$dbuname="root"; 
-		$dbpass = ""; 
+		$dbpass = "123456"; 
 		break;
 	case 1:
 		$dbuname="root"; 
-		$dbpass = ""; 
+		$dbpass = "123456"; 
 		break;
 	case 2:
 		$dbuname="root"; 
-		$dbpass = ""; 
+		$dbpass = "123456"; 
 		break;
 }
 

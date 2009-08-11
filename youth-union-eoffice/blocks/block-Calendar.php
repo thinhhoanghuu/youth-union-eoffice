@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
 * @Program:		NukeViet CMS

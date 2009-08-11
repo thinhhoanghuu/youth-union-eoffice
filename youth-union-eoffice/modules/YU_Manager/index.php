@@ -367,6 +367,7 @@ function YUSave($memid="")
 	include("footer.php");
 }
 
+
 /**
  * EventInfo
  * 
@@ -386,7 +387,7 @@ function EventInfo()
 	echo "<tr align=center><td><b>"._EVENTID."</b></td><td><b>"._DETAIL."</b></td></tr>\n";
 	while ($row=$db->sql_fetchrow($result))
 	{
-		echo "<tr><td align=center><a href=\"modules.php?name=YU_Manager&amp;op=eventdetail&amp;eventid=".$row[0]."\">".$row[0]."</a></td><td>".$row[1]."</td></tr>\n";
+		echo "<tr><td align=center><a href=\"modules.php?name=YU_Manager&amp;op=eventdetail&amp;eventid=".$row[0]."&ev=true\">".$row[0]."</a></td><td>".$row[1]."</td></tr>\n";
 	}
 	echo "</table>";
 	
@@ -398,20 +399,23 @@ function EventInfo()
  * 
  * @return
  * */
-function EventDetail($eventid)
+function EventDetail($eventid, $ev)
 {
 	global $db,$yu_prefix, $module_name;
 	include("header.php");
+	
 	OpenTable();
 	$sql1="SELECT * FROM ".$yu_prefix."_events WHERE event_id='$eventid'";
 	$sql2="SELECT A.member_id, A.name, B.base_id, B.name FROM ".$yu_prefix."_yumember A, ".$yu_prefix."_yubase B, ".$yu_prefix."_joinevent C WHERE A.member_id=C.member_id AND A.current_branch=B.base_id AND C.event_id='$eventid'";
-	
 	$result1=$db->sql_query($sql1);	
 	$row1=$db->sql_fetchrow($result1);	
+	
 	OpenTable2();
 	echo "<center><b>"._EVENTID." : $eventid <br> "._DETAIL.":".$row1['description']." </b></center>\n";
 	CloseTable2();
+	
 	$result2=$db->sql_query($sql2);
+	
 	OpenTable();
 	echo "<table border=0 width=100%>\n";
 	echo "<tr>"._MEMJOIN."</tr>";
@@ -422,8 +426,42 @@ function EventDetail($eventid)
 	}
 	echo "</table>";
 	CloseTable();
+	
 	CloseTable();
+	
+	// change UI when click to _ADDYUMEM link
+	if ($ev == true) 
+	{
+		$ev = false;
+		echo "<br><center><A HREF=\"modules.php?name=YU_Manager&op=eventdetail&eventid=$eventid&ev=$ev\">" ._ADDYUMEM. "</A></center>";		
+	}
+	else
+	{
+		$ev = true;
+		$memberid = $_POST["memberid"];
+		echo "<FORM action=\"modules.php\">";		
+		echo "<input type=hidden name=name value=$module_name />\n";
+		echo "<input type=hidden name=op value=newmember />\n";
+		echo "<input type=hidden name=memberid value=\"".$memberid."\"/>";
+		echo "<input type=hidden name=eventid value=\"".$eventid."\"/>";
+		echo "<input type=hidden name=ev value=\"".$ev."\"/>";
+		echo "<br><center> "._MEMBERID. " <input type=text name=\"memberid\">  <button type=\"submit\">Add</button></center>";
+		echo "</FORM>";	
+	}
+	
 	include("footer.php");
+}
+
+
+function AddNewMemberToEvent($memberid, $eventid, $ev)
+{
+	global $db, $yu_prefix, $module_name;
+	
+	$sql_q="INSERT INTO " .$yu_prefix."_joinevent VALUES($memberid, $eventid)";
+	//echo $sql_q;	
+	$result=$db->sql_query($sql_q);			
+	
+	EventDetail($eventid, $ev);
 }
 
 switch ( $op )
@@ -459,7 +497,7 @@ switch ( $op )
 
 
 	case "eventdetail":
-		EventDetail($eventid);
+		EventDetail($eventid, $ev);
 		break;
 
 	case "changpass":
@@ -475,6 +513,9 @@ switch ( $op )
 		break;
 	case "yuinfo":
 		YUInfo();
+		break;
+	case "newmember":
+		AddNewMemberToEvent($memberid, $eventid, $ev);
 		break;
 	default:
 		Login();	
