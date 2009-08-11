@@ -1,14 +1,14 @@
 <?php
 
 // File: ulist.php.
-// Created: 08-08-2009 11:51:42.
-// Modified: 08-08-2009 11:51:42.
+// Created: 10-08-2009 12:03:01.
+// Modified: 11-08-2009 15:35:25.
 // Do not change anything in this file!
 
 if ((!defined('NV_SYSTEM')) AND (!defined('NV_ADMIN'))) {
 die('Stop!!!');
 }
 
-$udt[2] = "hoainam|hoainam|hoainam@gmail.com";
+$udt[2] = "minsu|minsu|minsu@gmail.com";
 
 ?>
