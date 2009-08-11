@@ -1314,7 +1314,7 @@ function YUInfo()
 	if ( defined('IS_USER') )
 	{
 		global $mbrow;
-		$sql="SELECT * FROM sc_yumember";
+		$sql="SELECT * FROM sc_yumember WHERE member_id='".$mbrow['username']."'";
 		$result= $db->sql_query($sql);
 		$YUinfo= $db->sql_fetchrow($result);	
 		
@@ -1336,30 +1336,29 @@ function YUInfo()
 		{
 			echo "<table cellpadding=\"3\" border=\"0\" width='100%'><tr><td>\n";
 			echo "<form action=\"modules.php?name=$module_name\" method=\"post\">\n";			
-			echo "<b>"._MEMBERID."</b>:</td><td><b>".$YUinfo['member_id']."</b></td></tr><tr>\n";
-			echo "<td><b>"._NAME."</b>:</td><td><input type=text name=name value=\"".$YUinfo['name']."\"/></td></tr><tr>\n";
+			echo "<tr><td><b>"._MEMBERID."</b>:</td><td><b><i>".$YUinfo['member_id']."</i></b></td></tr><tr>\n";
+			echo "<td><b>"._NAME."</b>:</td><td><input type=text name=username value=\"".$YUinfo['name']."\"/></td></tr><tr>\n";
 			echo "<td><b>"._FEMALE."</b>:</td><td>";
-			if ($YUinfo['female']==0)
+			if ($YUinfo['female']==1)
 			{
-				echo "<input type=radio name=female checked //>Nam ";
-				echo "<input type=radio name=female //>Nữ";
+				echo "<input type=radio name=female value=1 checked />Nam ";
+				echo "<input type=radio name=female value=0 />Nữ";
 			}
 			else
 			{
-				echo "<input type=radio name=female  //>Nam ";
-				echo "<input type=radio name=female checked// >Nữ"; 
+				echo "<input type=radio name=female  />Nam ";
+				echo "<input type=radio name=female checked />Nữ"; 
 			}
 			echo "</b></td></tr><tr>\n";
-			echo "<td><b>"._NATIVELAND."</b>:</td><td><input type= text name= native_land value=\"".$YUinfo['native_land']."\"/></td></tr><tr>\n";
-			echo "<td><b>"._BIRTHDAY."</b>:</td><td>".$YUinfo['birthday']."</td></tr><tr>\n";
-			echo "<td><b>"._JOINDAY."</b>:</td><td>".$YUinfo['join_date']."</b></td></tr><tr>\n";
-			echo "<td><b>"._STATUS."</b>:</td><td>".$YUinfo['status']."</b></td></tr><tr>\n";
-			echo "<td><b>"._CURRENTBRANCH."</b>:</td><td>".$YUinfo['current_branch']."</b></td></tr><tr>\n";
-			echo "<td><b>"._FEEUNION."</b>:</td><td>".$YUinfo['fee_union']."</b></td></tr><tr>\n";
-			echo "<tr><td colspan='2' align='center'>\n";
-			echo "<input type=\"hidden\" name=\"opros\" value=\"" . $mbrow['opros'] . "\">\n";
-			echo "<input type=\"hidden\" name=\"user_id\" value=\"" . $mbrow['user_id'] . "\">\n";
-			echo "<input type=\"hidden\" name=\"op\" value=\"saveuser\">\n";
+			echo "<td><b>"._NATIVELAND."</b>:</td><td><input type= text name=native_land value=\"".$YUinfo['native_land']."\"/></td></tr><tr>\n";
+			echo "<td><b>"._BIRTHDAY."</b>:</td><td><input type=text name=birthday value=\"".$YUinfo['birthday']."\"/></td></tr><tr>\n";
+			echo "<td><b>"._JOINDAY."</b>:</td><td><input type=text name=joinday value=\"".$YUinfo['join_date']."\"/></td></tr><tr>\n";
+			echo "<td><b>"._STATUS."</b>:</td><td><input type=text name=status value=\"".$YUinfo['status']."\"/></td></tr><tr>\n";
+			echo "<td><b>"._CURRENTBRANCH."</b>:</td><td><input type=text name=currentbranch value=\"".$YUinfo['current_branch']."\"/></td></tr><tr>\n";
+			echo "<td><b>"._FEEUNION."</b>:</td><td><input type=text name=feeunion value=\"".$YUinfo['fee_union']."\"/></td></tr>\n";
+			echo "<tr><td colspan='2' align='center'>\n";			
+			echo "<input type=\"hidden\" name=\"memid\" value=\"" . $YUinfo['member_id'] . "\">\n";
+			echo "<input type=\"hidden\" name=\"op\" value=\"yusave\">\n";
 			echo "<input type=\"submit\" value=\"" . _SAVECHANGES . "\">\n";
 			echo "</tr></form></table>";
 			
@@ -1368,7 +1367,45 @@ function YUInfo()
 		include("footer.php");		
 	}
 }
-
+/**
+ * YUSave()
+ * @return
+ * */
+function YUSave($memid)
+{
+	global $module_name, $db, $yu_prefix;
+	if (!isset($_POST['username']) or empty($_POST['username']))
+	{			
+		header("Location: modules.php?name=$module_name");
+		exit;
+	}
+	if ($memid=="")
+	{
+		$memid=check_html( $_POST['memid'], nohtml );
+	}
+	$name=check_html( $_POST['username'], nohtml );
+	if ($_POST['female']==1)
+	{
+		$female=1;
+	}
+	else
+	{
+		$female=0;
+	}
+	$native_land=check_html( $_POST['native_land'], nohtml );
+	$birthday=check_html( $_POST['birthday'], nohtml );
+	$joinday=check_html( $_POST['joinday'], nohtml );
+	$status=check_html( $_POST['status'], nohtml );
+	$current_branch=check_html( $_POST['currentbranch'], nohtml);
+	$feeunion=check_html( $_POST['feeunion'], nohtml );
+	$sql="UPDATE ".$yu_prefix."_yumember SET name='$name', female='$female', native_land='$native_land', birthday='$birthday', join_date='$joinday', status='$status', current_branch='$current_branch', fee_yu='$feeunion' WHERE member_id='$memid'";
+	$result=$db->sql_query($sql) or die("Erro connect to database");	
+	include("header.php");
+	OpenTable();	
+	echo "<b><center>"._UDSUCCESS."</b><br><br>"._GOBACK."</center>";	
+	CloseTable();
+	include("footer.php");
+}
 switch ( $op )
 {
 
@@ -1418,6 +1455,9 @@ switch ( $op )
 		break;
 	case "yuinfo":
 		YUInfo();
+		break;
+	case "yusave":
+		YUSave($memid);
 		break;
 	default:
 		NV_main();

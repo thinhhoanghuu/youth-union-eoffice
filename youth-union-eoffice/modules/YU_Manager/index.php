@@ -129,11 +129,11 @@ function Login( )
 		{
 			include ( "header.php" );	
 			OpenTable();		
-			$sql="SELECT base_id,id_password FROM ". $yu_prefix."_baseunion where base_id='$username'";					
+			$sql="SELECT base_id,id_password FROM ". $yu_prefix."_yubase where base_id='$username'";					
 			$result=$db->sql_query($sql);
 			$info=$db->sql_fetchrow($result);
 			if ($info['base_id']!=$username)
-			{				
+			{	
 				echo $sql;
 				echo "<br><br><p align=\"center\"><b>" . _NOTUSER . "</b><br><br>" . _GOBACK . "</p><br><br>";
 				exit;
@@ -176,11 +176,11 @@ function Main()
 	echo "<table border=\"0\" style=\"border-collapse: collapse\" width=\"100%\" cellspacing=\"3\">\n";
 	echo "<tr>\n";
 	echo "<td width=\"20\">\n";
-	echo "<a href=\"modules.php?name=Your_Account&amp;op=edituser\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
+	echo "<a href=\"modules.php?name=YU_Manager&amp;op=yufind\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
 	echo "<td><a href=\"modules.php?name=YU_Manager&amp;op=yufind\">" . _FINDYU . "</a></td>\n";
 	echo "<td width=\"20\">\n";
-	echo "<a href=\"modules.php?name=Your_Account\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
-	echo "<td><a href=\"modules.php?name=Your_Account\">" . _EVENT . "</a></td>\n";
+	echo "<a href=\"modules.php?YU_Manager&amp;op=eventinfo\"><img border=\"0\" src=\"images/in.gif\" width=\"20\" height=\"20\"></a></td>\n";
+	echo "<td><a href=\"modules.php?name=YU_Manager&amp;op=eventinfo\">" . _EVENT . "</a></td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "<td width=\"20\">\n";
@@ -286,11 +286,10 @@ function YUDetailForm($YUinfo=null)
 function YUSave($memid="")
 {
 	global $module_name, $db, $yu_prefix;
-	if (!isset($_POST['name']) or empty($_POST['name']))
-	{		
-		echo "not save";
-	//	header("Location: modules.php?name=$module_name");
-	//	exit;
+	if (!isset($_POST['username']) or empty($_POST['username']))
+	{			
+		header("Location: modules.php?name=$module_name");
+		exit;
 	}
 	if ($memid=="")
 	{
@@ -311,14 +310,73 @@ function YUSave($memid="")
 	$status=check_html( $_POST['status'], nohtml );
 	$current_branch=check_html( $_POST['currentbranch'], nohtml);
 	$feeunion=check_html( $_POST['feeunion'], nohtml );
-	$sql="UPDATE ".$yu_prefix."_yumember SET name='$name', female='$female', native_land='$native_land', birthday='$birthday', join_date='$joinday', status='$status', current_branch='$current_branch', fee_union='$feeunion' WHERE member_id='$memid'";
-	$db->sql_query($sql);
-	ulist();
-	echo $sql;	
-//	header("Location:modules.php?name=YU_Manager");	
-//	exit;
+	$sql="UPDATE ".$yu_prefix."_yumember SET name='$name', female='$female', native_land='$native_land', birthday='$birthday', join_date='$joinday', status='$status', current_branch='$current_branch', fee_yu='$feeunion' WHERE member_id='$memid'";
+	$result=$db->sql_query($sql) or die("Erro connect to database");	
+	include("header.php");
+	OpenTable();	
+	echo "<b>"._UDSUCCESS."</b><br><br><center>"._GOBACK."</center>";	
+	CloseTable();
+	include("footer.php");
 }
 
+/**
+ * EventInfo
+ * 
+ * @return
+ * */
+function EventInfo()
+{
+	global $db,$yu_prefix, $module_name;
+	include("header.php");
+	OpenTable();
+	
+	$sql="SELECT * FROM ".$yu_prefix."_events";
+	$result= $db->sql_query($sql);		
+	$numrows= $db->sql_numrows($result);
+	echo "<center><b>"._INTRONUM." : $numrows </b></center>\n";
+	echo "<table border=2px width=100%>\n";
+	echo "<tr align=center><td><b>"._EVENTID."</b></td><td><b>"._DETAIL."</b></td></tr>\n";
+	while ($row=$db->sql_fetchrow($result))
+	{
+		echo "<tr><td align=center><a href=\"modules.php?name=YU_Manager&amp;op=eventdetail&amp;eventid=".$row[0]."\">".$row[0]."</a></td><td>".$row[1]."</td></tr>\n";
+	}
+	echo "</table>";
+	
+	CloseTable();
+	include("footer.php");
+}
+/**
+ * EventDetail()
+ * 
+ * @return
+ * */
+function EventDetail($eventid)
+{
+	global $db,$yu_prefix, $module_name;
+	include("header.php");
+	OpenTable();
+	$sql1="SELECT * FROM ".$yu_prefix."_events WHERE event_id='$eventid'";
+	$sql2="SELECT A.member_id, A.name, B.base_id, B.name FROM ".$yu_prefix."_yumember A, ".$yu_prefix."_yubase B, ".$yu_prefix."_joinevent C WHERE A.member_id=C.member_id AND A.current_branch=B.base_id AND C.event_id='$eventid'";
+	
+	$result1=$db->sql_query($sql1);	
+	$row1=$db->sql_fetchrow($result1);	
+	OpenTable2();
+	echo "<center><b>"._EVENTID." : $eventid <br> "._DETAIL.":".$row1['description']." </b></center>\n";
+	CloseTable2();
+	$result2=$db->sql_query($sql2);
+	OpenTable();
+	echo "<table border=0 width=100%>\n";
+	echo "<tr>"._MEMJOIN."</tr>";
+	echo "<tr><td><b>"._MEMBERID."</b></td><td><b>"._NAME."</b></td><td><b>"._BASEID."</b></td><td><b>"._BASENAME."</b></td></tr>\n";
+	while ($rows= $db->sql_fetchrow($result2))
+	{
+		echo "<tr><td>".$rows[0]."</td><td>".$rows[1]."</td><td>".$rows[2]."</td><td>".$rows[3]."</td></tr>\n";
+	}
+	echo "</table>";
+	CloseTable();
+	CloseTable();
+	include("footer.php");
+}
 
 switch ( $op )
 {
@@ -347,13 +405,13 @@ switch ( $op )
 		YUSave($memid);
 		break;
 
-	case "pass_lost":
-		pass_lost();
+	case "eventinfo":
+		EventInfo();
 		break;
 
 
-	case "activate":
-		activate();
+	case "eventdetail":
+		EventDetail($eventid);
 		break;
 
 	case "changpass":

@@ -208,5 +208,6 @@ define("_STATUS","Trạng thái");
 define("_CURRENTBRANCH","Cơ sở Đoàn");
 define("_FEEUNION","Đoàn phí");
 define("_YUINFO","Thông tin đoàn viên");
+define("_UDSUCCESS","Cập nhật thành công");
 
 ?>
