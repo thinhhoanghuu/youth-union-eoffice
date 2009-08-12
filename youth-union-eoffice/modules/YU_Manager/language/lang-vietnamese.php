@@ -8,6 +8,7 @@
 * @Copyright: 	(C) 2009
 * @License: 	http://opensource.org/licenses/gpl-license.php GNU Public License
 */
+define("_ADD","Thêm");
 define("_USERWRONG","Mã Đoàn Viên không hợp lệ");
 define("_PASSWRONG","Sai mật khẩu");
 define("_UNIONMANAGER","Quản lý đoàn viên");
@@ -35,6 +36,7 @@ define("_CURRENTBRANCH","Cơ sở Đoàn");
 define("_FEEUNION","Đoàn phí");
 define("_YUINFO","Thông tin đoàn viên");
 define("_EVENTID","Mã sự kiện");
+define("_EVENTNAME","Tên sự kiện");
 define("_DETAIL","Tóm tắt nội dung");
 define("_BASENAME","Tên cơ sở");
 define("_MEMJOIN","Đoàn viên tham gia");

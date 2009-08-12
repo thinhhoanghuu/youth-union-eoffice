@@ -377,11 +377,13 @@ function EventInfo()
 {
 	global $db,$yu_prefix, $module_name;
 	include("header.php");
+	
 	OpenTable();
 	
 	$sql="SELECT * FROM ".$yu_prefix."_events";
 	$result= $db->sql_query($sql);		
 	$numrows= $db->sql_numrows($result);
+	
 	echo "<center><b>"._INTRONUM." : $numrows </b></center>\n";
 	echo "<table border=2px width=100%>\n";
 	echo "<tr align=center><td><b>"._EVENTID."</b></td><td><b>"._DETAIL."</b></td></tr>\n";
@@ -391,6 +393,17 @@ function EventInfo()
 	}
 	echo "</table>";
 	
+	$eventid = $_POST["eventid"];
+	$eventname = $_POST["eventname"];
+	echo "<FORM action=\"modules.php\">";		
+	echo "<input type=hidden name=name value=$module_name />\n";
+	echo "<input type=hidden name=op value=newevent />\n";		
+	echo "<input type=hidden name=eventid value=\"".$eventid."\"/>";
+	echo "<input type=hidden name=eventname value=\"".$eventname."\"/>";
+	echo "<br><center> "._EVENTID. " <input type=text name=\"eventid\">  ";
+	echo ""._EVENTNAME. " <input type=text name=\"eventname\">  <button type=\"submit\">"._ADD."</button></center>";
+	echo "</FORM>";	
+	
 	CloseTable();
 	include("footer.php");
 }
@@ -399,7 +412,7 @@ function EventInfo()
  * 
  * @return
  * */
-function EventDetail($eventid, $ev)
+function EventDetail($eventid)
 {
 	global $db,$yu_prefix, $module_name;
 	include("header.php");
@@ -429,39 +442,38 @@ function EventDetail($eventid, $ev)
 	
 	CloseTable();
 	
-	// change UI when click to _ADDYUMEM link
-	if ($ev == true) 
-	{
-		$ev = false;
-		echo "<br><center><A HREF=\"modules.php?name=YU_Manager&op=eventdetail&eventid=$eventid&ev=$ev\">" ._ADDYUMEM. "</A></center>";		
-	}
-	else
-	{
-		$ev = true;
-		$memberid = $_POST["memberid"];
-		echo "<FORM action=\"modules.php\">";		
-		echo "<input type=hidden name=name value=$module_name />\n";
-		echo "<input type=hidden name=op value=newmember />\n";
-		echo "<input type=hidden name=memberid value=\"".$memberid."\"/>";
-		echo "<input type=hidden name=eventid value=\"".$eventid."\"/>";
-		echo "<input type=hidden name=ev value=\"".$ev."\"/>";
-		echo "<br><center> "._MEMBERID. " <input type=text name=\"memberid\">  <button type=\"submit\">Add</button></center>";
-		echo "</FORM>";	
-	}
+	$memberid = $_POST["memberid"];
+	echo "<FORM action=\"modules.php\">";		
+	echo "<input type=hidden name=name value=$module_name />\n";
+	echo "<input type=hidden name=op value=newmember />\n";
+	echo "<input type=hidden name=memberid value=\"".$memberid."\"/>";
+	echo "<input type=hidden name=eventid value=\"".$eventid."\"/>";
+	echo "<br><center> "._MEMBERID. " <input type=text name=\"memberid\">  <button type=\"submit\">"._ADD."</button></center>";
+	echo "</FORM>";	
 	
 	include("footer.php");
 }
 
 
-function AddNewMemberToEvent($memberid, $eventid, $ev)
+function AddNewMemberToEvent($memberid, $eventid)
 {
 	global $db, $yu_prefix, $module_name;
 	
-	$sql_q="INSERT INTO " .$yu_prefix."_joinevent VALUES($memberid, $eventid)";
-	//echo $sql_q;	
+	$sql_q="INSERT INTO " .$yu_prefix."_joinevent VALUES(\"$memberid\", \"$eventid\")";
 	$result=$db->sql_query($sql_q);			
 	
-	EventDetail($eventid, $ev);
+	EventDetail($eventid);
+}
+
+
+function AddNewEvent($eventid, $eventname)
+{
+	global $db, $yu_prefix, $module_name;
+	
+	$sql_q="INSERT INTO " .$yu_prefix."_events VALUES(\"$eventid\", \"$eventname\")";
+	$result=$db->sql_query($sql_q);			
+	
+	EventInfo();
 }
 
 switch ( $op )
@@ -497,7 +509,7 @@ switch ( $op )
 
 
 	case "eventdetail":
-		EventDetail($eventid, $ev);
+		EventDetail($eventid);
 		break;
 
 	case "changpass":
@@ -514,9 +526,15 @@ switch ( $op )
 	case "yuinfo":
 		YUInfo();
 		break;
+		
 	case "newmember":
-		AddNewMemberToEvent($memberid, $eventid, $ev);
+		AddNewMemberToEvent($memberid, $eventid);
 		break;
+		
+	case "newevent":
+		AddNewEvent($eventid, $eventname);
+		break;
+		
 	default:
 		Login();	
 		break;
