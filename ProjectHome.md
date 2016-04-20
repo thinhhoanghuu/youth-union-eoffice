@@ -1,0 +1,1 @@
+Website văn phòng Điện tử hỗ trợ việc lưu trữ, quản lý các tài liệu văn bản, thống kê số liệu, thành tích của các cơ sở Đoàn, ngoài ra với module Quản lý Đoàn viên, hệ thống website còn hỗ trợ thêm việc quản lý các thông tin Đoàn viên từ các hệ thống Đoàn cơ sở, góp phần vào việc tin học hóa công tác quản lý các hoạt động Đoàn, Hội.
